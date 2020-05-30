@@ -7,10 +7,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.annotation.NonNull;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.net.Uri;
 
-public class MainActivity extends AppCompatActivity implements IntroFragment.OnFragmentInteractionListener , ClassifierFragment.OnFragmentInteractionListener , DetailsFragment.OnFragmentInteractionListener, SuggestionsFragment.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements ChartFragment.OnFragmentInteractionListener , ClassifierFragment.OnFragmentInteractionListener , DetailsFragment.OnFragmentInteractionListener, SuggestionsFragment.OnFragmentInteractionListener{
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -21,10 +20,10 @@ public class MainActivity extends AppCompatActivity implements IntroFragment.OnF
             Fragment fragment = null;
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    fragment = new IntroFragment();
+                    fragment = new ClassifierFragment();
                     break;
                 case R.id.navigation_chart:
-                    fragment = new ClassifierFragment();
+                    fragment = new ChartFragment();
                     break;
                 case R.id.navigation_detail:
                     fragment = new DetailsFragment();
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements IntroFragment.OnF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, new IntroFragment()).commit();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, new ChartFragment()).commit();
         BottomNavigationView navView = findViewById(R.id.nav_view);
 
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
