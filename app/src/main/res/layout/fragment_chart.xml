@@ -6,10 +6,21 @@
     tools:context=".ChartFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="sfhfjsdjfjsdkfjsdklfjklsdjflksdjfkljsdlkfjsdkljfjklsdjfljsdffirst"
-        android:textSize="36sp" />
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PieChart"
+            android:textSize="36sp" />
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/chart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </RelativeLayout>
+
+
 
 </FrameLayout>

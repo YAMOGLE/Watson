@@ -1,12 +1,23 @@
 package com.example.watson;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
+
+import java.util.ArrayList;
+
+
 
 
 /**
@@ -28,6 +39,8 @@ public class ChartFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    PieChart pieChart;
 
     public ChartFragment() {
         // Required empty public constructor
@@ -58,13 +71,47 @@ public class ChartFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_intro, container, false);
+        View v = inflater.inflate(R.layout.fragment_chart, container, false);
+        pieChart = (PieChart) v.findViewById(R.id.chart);
+        pieChart.setUsePercentValues(true);
+        pieChart.getDescription().setEnabled(false);
+        pieChart.setExtraOffsets(5,10,5,5);
+        pieChart.setDragDecelerationFrictionCoef(0.45f);
+        pieChart.setDrawHoleEnabled(false);
+        pieChart.setHoleColor(Color.WHITE);
+        pieChart.setTransparentCircleRadius(61f);
+
+        ArrayList<PieEntry> values = new ArrayList<>();
+        values.add(new PieEntry(34f, "A"));
+        values.add(new PieEntry(23f, "B"));
+        values.add(new PieEntry(14f, "C"));
+        values.add(new PieEntry(34f, "D"));
+        values.add(new PieEntry(34f, "E"));
+        values.add(new PieEntry(34f, "F"));
+
+        PieDataSet  dataSet = new PieDataSet(values, "Catagory");
+        dataSet.setSliceSpace(3f);
+        dataSet.setSelectionShift(5f);
+        dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+
+        PieData data = new PieData(dataSet);
+        data.setValueTextSize(10f);
+        data.setValueTextColor(Color.YELLOW);
+
+        pieChart.setData(data);
+
+
+
+
+        return v;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
