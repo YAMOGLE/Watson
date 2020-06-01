@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -19,9 +20,14 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.ChartTouchListener;
+import com.github.mikephil.charting.listener.OnChartGestureListener;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import org.json.JSONArray;
@@ -40,7 +46,7 @@ import java.util.Locale;
  * Use the {@link ChartFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ChartFragment extends Fragment {
+public class ChartFragment extends Fragment implements OnChartGestureListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -109,6 +115,7 @@ public class ChartFragment extends Fragment {
         pieChart.setDrawHoleEnabled(false);
         pieChart.setHoleColor(Color.WHITE);
         pieChart.setTransparentCircleRadius(61f);
+        pieChart.setOnChartGestureListener(this);
 
 //        ArrayList<PieEntry> values = new ArrayList<>();
 ////        values.add(new PieEntry(34f, "A"));
@@ -186,6 +193,47 @@ public class ChartFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
+
+    @Override
+    public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+
+    }
+
+    @Override
+    public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
+
+    }
+
+    @Override
+    public void onChartLongPressed(MotionEvent me) {
+
+    }
+
+    @Override
+    public void onChartDoubleTapped(MotionEvent me) {
+
+    }
+
+    @Override
+    public void onChartSingleTapped(MotionEvent me) {
+        Log.i("sss", String.valueOf(pieChart.getHighlightByTouchPoint(me.getX(), me.getY()).getX()));
+    }
+
+    @Override
+    public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {
+
+    }
+
+    @Override
+    public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
+
+    }
+
+    @Override
+    public void onChartTranslate(MotionEvent me, float dX, float dY) {
+
+    }
+
 
     @Override
     public void onAttach(Context context) {
