@@ -25,9 +25,6 @@ public class MainActivity extends AppCompatActivity implements ChartFragment.OnF
                 case R.id.navigation_chart:
                     fragment = new ChartFragment();
                     break;
-                case R.id.navigation_detail:
-                    fragment = new DetailsFragment();
-                    break;
                 case R.id.navigation_suggestion:
                     fragment = new SuggestionsFragment();
                     break;
