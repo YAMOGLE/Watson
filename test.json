@@ -1,0 +1,14 @@
+{
+  "data": [
+    {
+      "Category": "food",
+      "Merchant": "mcdonald",
+      "Amount": 100
+    },
+    {
+      "Category": "drink",
+      "Merchant": "hand",
+      "Amount": 200.9
+    }
+  ]
+}
