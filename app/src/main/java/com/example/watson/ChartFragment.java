@@ -5,19 +5,31 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
-
-
+import java.util.Locale;
 
 
 /**
@@ -41,6 +53,12 @@ public class ChartFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     PieChart pieChart;
+
+    private static final String Url = "https://raw.githubusercontent.com/YAMOGLE/Watson/master/test.json";
+
+    private RequestQueue mQueue;
+
+
 
     public ChartFragment() {
         // Required empty public constructor
@@ -72,7 +90,6 @@ public class ChartFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-
     }
 
     @Override
@@ -80,6 +97,10 @@ public class ChartFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_chart, container, false);
+        mQueue = Volley.newRequestQueue(getContext());
+
+
+
         pieChart = (PieChart) v.findViewById(R.id.chart);
         pieChart.setUsePercentValues(true);
         pieChart.getDescription().setEnabled(false);
@@ -89,29 +110,74 @@ public class ChartFragment extends Fragment {
         pieChart.setHoleColor(Color.WHITE);
         pieChart.setTransparentCircleRadius(61f);
 
-        ArrayList<PieEntry> values = new ArrayList<>();
-        values.add(new PieEntry(34f, "A"));
-        values.add(new PieEntry(23f, "B"));
-        values.add(new PieEntry(14f, "C"));
-        values.add(new PieEntry(34f, "D"));
-        values.add(new PieEntry(34f, "E"));
-        values.add(new PieEntry(34f, "F"));
+//        ArrayList<PieEntry> values = new ArrayList<>();
+////        values.add(new PieEntry(34f, "A"));
+////        values.add(new PieEntry(23f, "B"));
+////        values.add(new PieEntry(14f, "C"));
+////        values.add(new PieEntry(34f, "D"));
+////        values.add(new PieEntry(34f, "E"));
+////        values.add(new PieEntry(34f, "F"));
+//
+//        PieDataSet  dataSet = new PieDataSet(values, "Category");
+//        dataSet.setSliceSpace(3f);
+//        dataSet.setSelectionShift(5f);
+//        dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+//
+//        PieData data = new PieData(dataSet);
+//        data.setValueTextSize(10f);
+//        data.setValueTextColor(Color.YELLOW);
+//
+//        pieChart.setData(data);
+        loadJsonData();
 
-        PieDataSet  dataSet = new PieDataSet(values, "Catagory");
-        dataSet.setSliceSpace(3f);
-        dataSet.setSelectionShift(5f);
-        dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
-
-        PieData data = new PieData(dataSet);
-        data.setValueTextSize(10f);
-        data.setValueTextColor(Color.YELLOW);
-
-        pieChart.setData(data);
-
-
-
+        Log.i("sss", "ddd");
 
         return v;
+    }
+
+
+    public void loadJsonData() {
+       JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, Url, null,
+               new Response.Listener<JSONObject>() {
+                   @Override
+                   public void onResponse(JSONObject response) {
+                       try {
+                           JSONArray jsonArray = response.getJSONArray("data");
+                           ArrayList<PieEntry> values = new ArrayList<>();
+                           for (int i = 0; i < jsonArray.length(); i++) {
+                               JSONObject item = jsonArray.getJSONObject(i);
+                               String category = item.getString("Category");
+                               String merchant = item.getString("Merchant");
+                               double amount = item.getDouble("Amount");
+                                Log.i("amount", String.valueOf(amount));
+                               values.add(new PieEntry((float)amount, category));
+                           }
+                           PieDataSet  dataSet = new PieDataSet(values, "Category");
+                           dataSet.setSliceSpace(3f);
+                           dataSet.setSelectionShift(5f);
+                           dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
+
+                           PieData data = new PieData(dataSet);
+                           data.setValueTextSize(10f);
+                           data.setValueTextColor(Color.YELLOW);
+
+                           pieChart.setData(data);
+                            pieChart.invalidate();
+
+
+
+                       } catch (JSONException e) {
+                           e.printStackTrace();
+                       }
+
+                   }
+               }, new Response.ErrorListener() {
+           @Override
+           public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+           }
+       });
+       mQueue.add(request);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

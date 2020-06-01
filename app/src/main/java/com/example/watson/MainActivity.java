@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements ChartFragment.OnF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.fragment_container, new ChartFragment()).commit();
+        fragmentManager.beginTransaction().replace(R.id.fragment_container, new ClassifierFragment()).commit();
         BottomNavigationView navView = findViewById(R.id.nav_view);
 
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
