@@ -1,9 +1,11 @@
 package com.example.watson;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -76,6 +78,7 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
     private RequestQueue mQueue;
     ArrayList<String> labels;
     LinkedHashMap<String, HashMap<String, Float>> allData;
+    SharedPreferences pref;
 
     public ChartFragment() {
         // Required empty public constructor
@@ -117,6 +120,7 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
         View v = inflater.inflate(R.layout.fragment_chart, container, false);
         mQueue = Volley.newRequestQueue(getContext());
         allData = new LinkedHashMap<>();
+        //pref = getActivity().getSharedPreferences("myPref", Context.MODE_PRIVATE);
 
 
         pieChart = (PieChart) v.findViewById(R.id.chart);
@@ -147,6 +151,7 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
 
         loadJsonData();
 
+
         Log.i("sss", "ddd");
 
         return v;
@@ -156,11 +161,12 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
         HashMap<String, Float> currentMap = allData.get((allData.keySet().toArray())[index]);
         ArrayList<BarEntry> yVals = new ArrayList<>();
         labels = new ArrayList<>();
-        int i = 1;
+        int i = 0;
         for(String merch : currentMap.keySet()) {
             labels.add(merch);
             yVals.add(new BarEntry(i++, currentMap.get(merch)));
         }
+        Log.i("list", String.valueOf(labels.size()));
 
         BarDataSet set = new BarDataSet(yVals, "Data");
         set.setColors(ColorTemplate.MATERIAL_COLORS);
@@ -168,7 +174,8 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
         BarData data = new BarData(set);
 
         barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
-        barChart.getXAxis().setGranularityEnabled(false);
+        barChart.getXAxis().setGranularity(1f);
+        barChart.getXAxis().setGranularityEnabled(true);
         barChart.setData(data);
         barChart.invalidate();
         barChart.animateY(500);
@@ -201,6 +208,20 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
                                }
 
                            }
+
+
+                           SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                            //sharedPrefs.edit().clear().commit();
+                           String dataddd = sharedPrefs.getString("newItem", "null");
+                           Log.i("newItem", dataddd);
+                           if(dataddd != "null") {
+                               String[] list = dataddd.split(",");
+                               Log.d("list0", list[0]);
+                               Log.d("list1", list[1]);
+                               Log.d("listsss", String.valueOf(allData.get("Grocery")));
+                               allData.get(list[1]).put(list[0], allData.get(list[1]).get(list[0]) + Float.valueOf(list[2]));
+                           }
+
                            for(String cate: allData.keySet()){
                                int amount = 0;
                                for(String merch : allData.get(cate).keySet()) amount += allData.get(cate).get(merch);
@@ -233,6 +254,8 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
            }
        });
        mQueue.add(request);
+
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

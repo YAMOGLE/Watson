@@ -8,6 +8,7 @@ import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Base64;
@@ -37,6 +38,7 @@ public class ClassifierFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static String MY_PREFS = "myPref";
 
     private static final int Image_Capture_Code = 1;
     private ImageView imgCapture;
@@ -202,12 +204,16 @@ public class ClassifierFragment extends Fragment {
         protected void onPostExecute(String fromserver){
             super.onPostExecute(fromserver);
             try {
+                //SharedPreferences.Editor edt = getActivity().getSharedPreferences(MY_PREFS, Context.MODE_PRIVATE).edit();
+                SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                SharedPreferences.Editor editor = sharedPrefs.edit();
+                editor.putString("newItem", fromserver);
+                editor.apply();
+                Log.d("dd", "done");
                 Log.d("received_string",fromserver);
                 JSONObject jObject = new JSONObject(fromserver);
-                SharedPreferences pref = getActivity().getPreferences(Context.MODE_PRIVATE);
-                SharedPreferences.Editor edt = pref.edit();
-                edt.putString("newItem", fromserver);
-                edt.commit();
+
+
             }catch (Exception e){}
         }
     }
