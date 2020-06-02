@@ -183,7 +183,7 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
                                String category = item.getString("Category");
                                String merchant = item.getString("Merchant");
                                double amount = item.getDouble("Amount");
-
+                            Log.i("money", String.valueOf(amount));
                                if(!allData.containsKey(category)) {
                                    allData.put(category, new HashMap<String, Double>());
                                     allData.get(category).put(merchant, amount);
