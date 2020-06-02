@@ -43,7 +43,7 @@ public class ClassifierFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private int PORT = 8000;
-    private String SERVERIP = "172.20.10.6";
+    private String SERVERIP = "206.189.224.61";
 
     private OnFragmentInteractionListener mListener;
 

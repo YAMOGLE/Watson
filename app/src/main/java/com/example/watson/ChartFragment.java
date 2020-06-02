@@ -19,11 +19,17 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
@@ -34,7 +40,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 
@@ -59,12 +67,14 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
     private OnFragmentInteractionListener mListener;
 
     PieChart pieChart;
+    BarChart barChart;
+
 
     private static final String Url = "https://raw.githubusercontent.com/YAMOGLE/Watson/master/test.json";
 
     private RequestQueue mQueue;
-
-
+    ArrayList<String> labels = new ArrayList<>();
+    HashMap<String, HashMap<String, Double>> allData;
 
     public ChartFragment() {
         // Required empty public constructor
@@ -91,6 +101,7 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -104,7 +115,7 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_chart, container, false);
         mQueue = Volley.newRequestQueue(getContext());
-
+        allData = new HashMap<>();
 
 
         pieChart = (PieChart) v.findViewById(R.id.chart);
@@ -117,29 +128,45 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
         pieChart.setTransparentCircleRadius(61f);
         pieChart.setOnChartGestureListener(this);
 
-//        ArrayList<PieEntry> values = new ArrayList<>();
-////        values.add(new PieEntry(34f, "A"));
-////        values.add(new PieEntry(23f, "B"));
-////        values.add(new PieEntry(14f, "C"));
-////        values.add(new PieEntry(34f, "D"));
-////        values.add(new PieEntry(34f, "E"));
-////        values.add(new PieEntry(34f, "F"));
-//
-//        PieDataSet  dataSet = new PieDataSet(values, "Category");
-//        dataSet.setSliceSpace(3f);
-//        dataSet.setSelectionShift(5f);
-//        dataSet.setColors(ColorTemplate.JOYFUL_COLORS);
-//
-//        PieData data = new PieData(dataSet);
-//        data.setValueTextSize(10f);
-//        data.setValueTextColor(Color.YELLOW);
-//
-//        pieChart.setData(data);
+        barChart = (BarChart) v.findViewById(R.id.barChart);
+        barChart.getXAxis().setDrawGridLines(false);
+        barChart.getXAxis().setDrawAxisLine(true);
+        barChart.getXAxis().setDrawLabels(true);
+        barChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+        barChart.getAxisLeft().setDrawGridLines(false);
+        barChart.getAxisLeft().setDrawLabels(false);
+        barChart.getAxisRight().setDrawGridLines(false);
+        barChart.getAxisRight().setDrawLabels(false);
+
+
+        barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+//        barChart.getXAxis().setGranularity(0.5f);
+        barChart.getXAxis().setGranularityEnabled(false);
+
+
         loadJsonData();
 
         Log.i("sss", "ddd");
 
         return v;
+    }
+
+    public void updateBarChart(){
+        ArrayList<BarEntry> yVals = new ArrayList<>();
+        for(int i = 0; i < 8; i++) {
+            float value = (float) (Math.random()*10);
+            yVals.add(new BarEntry(i, value));
+
+        }
+        BarDataSet set = new BarDataSet(yVals, "Data");
+        set.setColors(ColorTemplate.MATERIAL_COLORS);
+        set.setDrawValues(true);
+        BarData data = new BarData(set);
+
+
+        barChart.setData(data);
+        barChart.invalidate();
+        barChart.animateY(500);
     }
 
 
@@ -156,8 +183,24 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
                                String category = item.getString("Category");
                                String merchant = item.getString("Merchant");
                                double amount = item.getDouble("Amount");
-                                Log.i("amount", String.valueOf(amount));
-                               values.add(new PieEntry((float)amount, category));
+
+                               if(!allData.containsKey(category)) {
+                                   allData.put(category, new HashMap<String, Double>());
+                                    allData.get(category).put(merchant, amount);
+                               } else {
+                                   if(allData.get(category).containsKey(merchant)) {
+                                       allData.get(category).put(merchant, allData.get(category).get(merchant) + amount);
+                                   } else {
+                                       allData.get(category).put(merchant, amount);
+                                   }
+                               }
+
+                           }
+                           for(String cate: allData.keySet()){
+                               int amount = 0;
+                               for(String merch : allData.get(cate).keySet()) amount += allData.get(cate).get(merch);
+                               values.add(new PieEntry((float)amount, cate));
+
                            }
                            PieDataSet  dataSet = new PieDataSet(values, "Category");
                            dataSet.setSliceSpace(3f);
@@ -217,6 +260,7 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
     @Override
     public void onChartSingleTapped(MotionEvent me) {
         Log.i("sss", String.valueOf(pieChart.getHighlightByTouchPoint(me.getX(), me.getY()).getX()));
+        updateBarChart();
     }
 
     @Override

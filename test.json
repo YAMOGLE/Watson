@@ -1,14 +1,59 @@
 {
   "data": [
     {
-      "Category": "food",
-      "Merchant": "mcdonald",
-      "Amount": 100
+      "Category": "Dining",
+      "Merchant": "KFC",
+      "Amount": 34.5
     },
     {
-      "Category": "food",
-      "Merchant": "hand",
-      "Amount": 200.9
+      "Category": "Dining",
+      "Merchant": "Applebee",
+      "Amount": 70.9
+    },
+    {
+      "Category": "Dining",
+      "Merchant": "Sushiya",
+      "Amount": 70.9
+    }, {
+      "Category": "Dining",
+      "Merchant": "Molly's",
+      "Amount": 30.4
+    }, {
+      "Category": "Shopping",
+      "Merchant": "Target",
+      "Amount": 100.6
+    } , {
+      "Category": "Shopping",
+      "Merchant": "CVS",
+      "Amount": 45.6
+    }, {
+      "Category": "Shopping",
+      "Merchant": "Kohl's",
+      "Amount": 67.8
+    }, {
+      "Category": "Travel",
+      "Merchant": "Booking",
+      "Amount": 200.0
+    } , {
+      "Category": "Travel",
+      "Merchant": "Delta",
+      "Amount": 145.6
+    }, {
+      "Category": "Grocery",
+      "Merchant": "Price Chopper",
+      "Amount": 77.9
+    }, {
+      "Category": "Grocery",
+      "Merchant": "Hannaford",
+      "Amount": 90.8
+    }, {
+      "Category": "Grocery",
+      "Merchant": "Shaw's",
+      "Amount": 34.5
+    }, {
+      "Category": "Grocery",
+      "Merchant": "Wholefoods",
+      "Amount": 20.6
     }
   ]
 }
