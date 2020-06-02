@@ -43,6 +43,7 @@ import org.json.JSONObject;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 
 
@@ -73,8 +74,8 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
     private static final String Url = "https://raw.githubusercontent.com/YAMOGLE/Watson/master/test.json";
 
     private RequestQueue mQueue;
-    ArrayList<String> labels = new ArrayList<>();
-    HashMap<String, HashMap<String, Double>> allData;
+    ArrayList<String> labels;
+    LinkedHashMap<String, HashMap<String, Float>> allData;
 
     public ChartFragment() {
         // Required empty public constructor
@@ -115,7 +116,7 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_chart, container, false);
         mQueue = Volley.newRequestQueue(getContext());
-        allData = new HashMap<>();
+        allData = new LinkedHashMap<>();
 
 
         pieChart = (PieChart) v.findViewById(R.id.chart);
@@ -139,9 +140,9 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
         barChart.getAxisRight().setDrawLabels(false);
 
 
-        barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+
 //        barChart.getXAxis().setGranularity(0.5f);
-        barChart.getXAxis().setGranularityEnabled(false);
+
 
 
         loadJsonData();
@@ -151,19 +152,23 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
         return v;
     }
 
-    public void updateBarChart(){
+    public void updateBarChart(int index){
+        HashMap<String, Float> currentMap = allData.get((allData.keySet().toArray())[index]);
         ArrayList<BarEntry> yVals = new ArrayList<>();
-        for(int i = 0; i < 8; i++) {
-            float value = (float) (Math.random()*10);
-            yVals.add(new BarEntry(i, value));
-
+        labels = new ArrayList<>();
+        int i = 1;
+        for(String merch : currentMap.keySet()) {
+            labels.add(merch);
+            yVals.add(new BarEntry(i++, currentMap.get(merch)));
         }
+
         BarDataSet set = new BarDataSet(yVals, "Data");
         set.setColors(ColorTemplate.MATERIAL_COLORS);
         set.setDrawValues(true);
         BarData data = new BarData(set);
 
-
+        barChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+        barChart.getXAxis().setGranularityEnabled(false);
         barChart.setData(data);
         barChart.invalidate();
         barChart.animateY(500);
@@ -182,10 +187,10 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
                                JSONObject item = jsonArray.getJSONObject(i);
                                String category = item.getString("Category");
                                String merchant = item.getString("Merchant");
-                               double amount = item.getDouble("Amount");
+                               float amount = (float)item.getDouble("Amount");
                             Log.i("money", String.valueOf(amount));
                                if(!allData.containsKey(category)) {
-                                   allData.put(category, new HashMap<String, Double>());
+                                   allData.put(category, new HashMap<String, Float>());
                                     allData.get(category).put(merchant, amount);
                                } else {
                                    if(allData.get(category).containsKey(merchant)) {
@@ -260,7 +265,8 @@ public class ChartFragment extends Fragment implements OnChartGestureListener {
     @Override
     public void onChartSingleTapped(MotionEvent me) {
         Log.i("sss", String.valueOf(pieChart.getHighlightByTouchPoint(me.getX(), me.getY()).getX()));
-        updateBarChart();
+
+        updateBarChart((int)pieChart.getHighlightByTouchPoint(me.getX(), me.getY()).getX());
     }
 
     @Override

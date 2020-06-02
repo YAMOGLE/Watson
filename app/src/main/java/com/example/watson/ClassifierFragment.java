@@ -2,6 +2,7 @@ package com.example.watson;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.net.Uri;
@@ -203,6 +204,10 @@ public class ClassifierFragment extends Fragment {
             try {
                 Log.d("received_string",fromserver);
                 JSONObject jObject = new JSONObject(fromserver);
+                SharedPreferences pref = getActivity().getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor edt = pref.edit();
+                edt.putString("newItem", fromserver);
+                edt.commit();
             }catch (Exception e){}
         }
     }
